@@ -1,0 +1,11 @@
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.csproj.AssemblyReference.cache
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.csproj.SuggestedBindingRedirects.cache
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba_6.Properties.Resources.resources
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.csproj.GenerateResource.cache
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.csproj.CoreCompileInputs.cache
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba_6.Form1.resources
+C:\Users\suisideboy\source\repos\laba 6\bin\Debug\laba 6.exe.config
+C:\Users\suisideboy\source\repos\laba 6\bin\Debug\laba 6.exe
+C:\Users\suisideboy\source\repos\laba 6\bin\Debug\laba 6.pdb
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.exe
+C:\Users\suisideboy\source\repos\laba 6\obj\Debug\laba 6.pdb
