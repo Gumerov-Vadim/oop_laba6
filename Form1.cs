@@ -14,17 +14,34 @@ namespace laba_6
 
     public partial class Form1 : Form
     {
+        public class Settings
+        {
+            private int selected_obj;
+            private int size;
+            private int color;
+            public System.EventHandler observers;
+            public int pick_obj(int i){ _ = (i >= 0) ? selected_obj = i : selected_obj = 0; observers.Invoke(this, null); return selected_obj;}
+            public int pick_obj() { return selected_obj; }
+            public Settings()
+            {
+                selected_obj = 0;
+                size = 60;
+                color = 0;
+            }
+        }
         public class Object
         {
-            public int _x, _y;
+            public int _x, _y,_size;
             public bool _selected;
             public System.Windows.Forms.Button obj = new System.Windows.Forms.Button();
             //public System.Windows.Forms.MouseEventHandler click_circle;
             public Object()
             {
-                _x = 10; _y = 10;
+                _x = 10; _y = 10; _size=60;
                  obj.FlatStyle = FlatStyle.Flat;
                 obj.FlatAppearance.BorderSize = 0;
+                obj.Width = 60;
+                obj.Height = 60;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
                 obj.BackColor = System.Drawing.Color.Green;
 
@@ -33,9 +50,22 @@ namespace laba_6
             }
             public Object(int x, int y)
             {
-                _x = x; _y = y;
+                _x = x; _y = y; _size = 60;
                 obj.FlatStyle = FlatStyle.Flat;
                 obj.FlatAppearance.BorderSize = 0;
+                obj.Width = 60;
+                obj.Height = 60;
+                obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
+                obj.BackColor = System.Drawing.Color.Green;
+
+            }
+            public Object(int x, int y,int size)
+            {
+                _x = x; _y = y; _size = size;
+                obj.FlatStyle = FlatStyle.Flat;
+                obj.FlatAppearance.BorderSize = 0;
+                obj.Width = size;
+                obj.Height = size;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
                 obj.BackColor = System.Drawing.Color.Green;
 
@@ -70,8 +100,6 @@ namespace laba_6
             public Circle()
             {
                 _radius = 30;
-                obj.Width = 60;
-                obj.Height = 60;
 
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
                 gPath.AddEllipse(0, 0, 60, 60);
@@ -81,23 +109,67 @@ namespace laba_6
             public Circle(int x,int y):base(x,y)
             {
                 _radius = 30;
-                obj.Width = 60;
-                obj.Height = 60;
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
                 gPath.AddEllipse(0, 0, 60, 60);
                 Region rg = new Region(gPath);
                 obj.Region = rg;
             }
-            public Circle(int x,int y,int radius):base(x,y)
+            public Circle(int x,int y,int radius):base(x,y,radius*2)
             {
                 _radius = radius;
-                obj.Width = _radius * 2;
-                obj.Height = _radius * 2;
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
                 gPath.AddEllipse(0, 0, 60, 60);
                 Region rg = new Region(gPath);
                 obj.Region = rg;
             }
+        }
+        public class Square : Object
+        {
+            public Square(){}
+            public Square(int x, int y) : base(x, y){}
+            public Square(int x, int y,int size) : base(x, y,size){}
+        }
+        public class Triangle:Object
+        {
+            public Triangle()
+            {
+                obj.Width = 60;
+                obj.Height = 60;
+
+                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
+                Point point1 = new Point(_x+obj.Width/2, _y+obj.Height/2);
+                Point point2 = new Point(_x, _y-obj.Height / 2);
+                Point point3 = new Point(_x+obj.Width, _y- obj.Height / 2);
+                Point[] curvePoints ={ point1, point2, point3 };
+                gPath.AddPolygon(curvePoints);
+                Region rg = new Region(gPath);
+                obj.Region = rg;
+            }
+            public Triangle(int x, int y) : base(x, y)
+            {
+
+                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
+                gPath.AddPolygon(new[] {
+                    new Point(0, obj.Height),
+                    new Point(obj.Height, obj.Width),
+                    new Point(obj.Width / 2, 0)
+                });
+                Region rg = new Region(gPath);
+                obj.Region = rg;
+            }
+            public Triangle(int x, int y,int size) : base(x, y,size)
+            {
+
+                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
+                gPath.AddPolygon(new[] {
+                    new Point(0, obj.Height),
+                    new Point(obj.Height, obj.Width),
+                    new Point(obj.Width / 2, 0)
+                });
+                Region rg = new Region(gPath);
+                obj.Region = rg;
+            }
+
         }
         public class Storage
         {
@@ -113,7 +185,7 @@ namespace laba_6
                 }
                 if (i != _size)
                 {
-                    massive[i] = new Circle(x, y);
+                    massive[i] = new Triangle(x, y);
                     massive[i].inside().Name = (i).ToString();
                 }
             }
@@ -178,12 +250,12 @@ namespace laba_6
         }
         Storage storage = new Storage();
         //int i = 0;
+        Settings obj_settings = new Settings();
         public Form1()
         {
             InitializeComponent();
-
+            obj_settings.observers += new EventHandler(this.updatefromsettings);
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             //storage = File.Exists("save.json") ? JsonConvert.DeserializeObject<Storage>(File.ReadAllText("save.json")) : new Storage();
@@ -204,16 +276,32 @@ namespace laba_6
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             //            i++;
-            Object circle = new Circle(e.X, e.Y);
-            storage.add(circle);
-            if (circle != null)
+            Object obj=null;
+            switch (obj_settings.pick_obj())
             {
-                circle.inside().MouseClick += select_circle;
-                circle.inside().KeyDown += del_selected_circle;
-                this.Controls.Add(circle.inside());
+                case 0:
+                    obj = new Circle(e.X, e.Y);
+                    break;
+                case 1:
+                    obj = new Triangle(e.X, e.Y);
+                    break;
+                case 2:
+                    obj = new Square(e.X, e.Y);
+                    break;
+                default:
+                    obj = null;
+                    //impossible
+                    break;
+            }
+            storage.add(obj);
+            if (obj != null)
+            {
+                obj.inside().MouseClick += select_circle;
+                obj.inside().KeyDown += del_selected_circle;
+                this.Controls.Add(obj.inside());
                 //                label1.Text = i.ToString();
                 storage.select_clear();
-                circle.select(true);
+                obj.select(true);
             }
         }
         private void select_circle(object sender, MouseEventArgs e)
@@ -262,7 +350,6 @@ namespace laba_6
                 }
             }
         }
-
         private void paint(object sender, EventArgs e)
         {
             int size = storage.size();
@@ -279,6 +366,35 @@ namespace laba_6
                 k++;
             }
         }
+        private void updatefromsettings(object sender, EventArgs e)
+        {
+            switch (obj_settings.pick_obj())
+            {
+                case 0:
+                    object_picker.Text = "Круг";
+                    break;
+                case 1:
+                    object_picker.Text = "Треугольник";
+                    break;
+                case 2:
+                    object_picker.Text = "Квадрат";
+                    break;
+            }
+            object_picker.Size = new System.Drawing.Size(100, 20);
+        }
+        private void кругToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            obj_settings.pick_obj(0);
+        }
 
+        private void треугольникToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            obj_settings.pick_obj(1);
+        }
+
+        private void квадратToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            obj_settings.pick_obj(2);
+        }
     }
 }
