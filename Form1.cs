@@ -16,34 +16,48 @@ namespace laba_6
     {
         public class Settings
         {
-            private int selected_obj;
+            private int selected;
             private int size;
-            private int color;
+            private Color color;
             public System.EventHandler observers;
-            public int pick_obj(int i){ _ = (i >= 0) ? selected_obj = i : selected_obj = 0; observers.Invoke(this, null); return selected_obj;}
-            public int pick_obj() { return selected_obj; }
+            public int pick_obj(int i){ _ = (i >= 0) ? selected = i : selected = 0; observers.Invoke(this, null); return selected;}
+            public int pick_obj() { return selected; }
+            public int resize(int size) { _ = (size>=10&&size<=100)? this.size = size:size = this.size; observers.Invoke(this, null); return size; }
+            public int resize() { return size; }
+            public void set_color(Color color) { this.color = color; }
+            public Color get_color() { return color; }
             public Settings()
             {
-                selected_obj = 0;
-                size = 60;
-                color = 0;
+                selected = 0;
+                size = 30;
+                color = Color.Green;
             }
         }
         public class Object
         {
-            public int _x, _y,_size;
+            protected int _x, _y,_size;
+            protected Color _color;
             public bool _selected;
             public System.Windows.Forms.Button obj = new System.Windows.Forms.Button();
             //public System.Windows.Forms.MouseEventHandler click_circle;
+            public void set(int x, int y) { _x = x; _y = y;}
+            public int getX() { return _x; }
+            public int getY() { return _y;}
+            public void set_color(Color color) { 
+                _color = color;
+                obj.BackColor = _color;
+            }
+            public void set_size(int size) { _ = size>0?_size = size: size; }
             public Object()
             {
                 _x = 10; _y = 10; _size=60;
+                _color = Color.Green;
                  obj.FlatStyle = FlatStyle.Flat;
                 obj.FlatAppearance.BorderSize = 0;
                 obj.Width = 60;
                 obj.Height = 60;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = System.Drawing.Color.Green;
+                obj.BackColor = _color;
 
                 //circle.Click += new EventHandler(select_circle);
 
@@ -51,24 +65,35 @@ namespace laba_6
             public Object(int x, int y)
             {
                 _x = x; _y = y; _size = 60;
+                _color = Color.Green;
                 obj.FlatStyle = FlatStyle.Flat;
                 obj.FlatAppearance.BorderSize = 0;
                 obj.Width = 60;
                 obj.Height = 60;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = System.Drawing.Color.Green;
-
+                obj.BackColor = _color;
             }
-            public Object(int x, int y,int size)
+            public Object(int x, int y, int size)
             {
                 _x = x; _y = y; _size = size;
+                _color = Color.Green;
                 obj.FlatStyle = FlatStyle.Flat;
                 obj.FlatAppearance.BorderSize = 0;
                 obj.Width = size;
                 obj.Height = size;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = System.Drawing.Color.Green;
-
+                obj.BackColor = _color;
+            }
+            public Object(int x, int y, int size, Color color)
+            {
+                _x = x; _y = y; _size = size;
+                _color = color;
+                obj.FlatStyle = FlatStyle.Flat;
+                obj.FlatAppearance.BorderSize = 0;
+                obj.Width = size;
+                obj.Height = size;
+                obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
+                obj.BackColor = color;
             }
             virtual public System.Windows.Forms.Button inside()
             {
@@ -89,7 +114,7 @@ namespace laba_6
                 else
                 {
                     this._selected = false;
-                    obj.BackColor = System.Drawing.Color.Green;
+                    obj.BackColor = this._color;
                     return false;
                 }
             }
@@ -97,57 +122,30 @@ namespace laba_6
         public class Circle : Object
         {
             private int _radius;
-            public Circle()
+            private void set_p()
             {
-                _radius = 30;
-
+                _radius = _size / 2;
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                gPath.AddEllipse(0, 0, 60, 60);
+                gPath.AddEllipse(0 + _radius / 2, 0 + _radius / 2, _radius, _radius);
                 Region rg = new Region(gPath);
                 obj.Region = rg;
             }
-            public Circle(int x,int y):base(x,y)
-            {
-                _radius = 30;
-                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                gPath.AddEllipse(0, 0, 60, 60);
-                Region rg = new Region(gPath);
-                obj.Region = rg;
-            }
-            public Circle(int x,int y,int radius):base(x,y,radius*2)
-            {
-                _radius = radius;
-                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                gPath.AddEllipse(0, 0, 60, 60);
-                Region rg = new Region(gPath);
-                obj.Region = rg;
-            }
+            public Circle(){set_p();}
+            public Circle(int x,int y):base(x,y) { set_p(); }
+            public Circle(int x, int y, int radius) : base(x, y, radius * 2) { set_p(); }
+            public Circle(int x, int y, int radius, Color color) : base(x, y, radius * 2,color) { set_p(); }
         }
         public class Square : Object
         {
             public Square(){}
-            public Square(int x, int y) : base(x, y){}
-            public Square(int x, int y,int size) : base(x, y,size){}
+            public Square(int x, int y) : base(x, y){ }
+            public Square(int x, int y, int size) : base(x, y, size) { }
+            public Square(int x, int y, int size,Color color) : base(x, y, size,color) { }
         }
         public class Triangle:Object
         {
-            public Triangle()
+            private void set_p()
             {
-                obj.Width = 60;
-                obj.Height = 60;
-
-                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                Point point1 = new Point(_x+obj.Width/2, _y+obj.Height/2);
-                Point point2 = new Point(_x, _y-obj.Height / 2);
-                Point point3 = new Point(_x+obj.Width, _y- obj.Height / 2);
-                Point[] curvePoints ={ point1, point2, point3 };
-                gPath.AddPolygon(curvePoints);
-                Region rg = new Region(gPath);
-                obj.Region = rg;
-            }
-            public Triangle(int x, int y) : base(x, y)
-            {
-
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
                 gPath.AddPolygon(new[] {
                     new Point(0, obj.Height),
@@ -157,38 +155,29 @@ namespace laba_6
                 Region rg = new Region(gPath);
                 obj.Region = rg;
             }
-            public Triangle(int x, int y,int size) : base(x, y,size)
-            {
-
-                System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                gPath.AddPolygon(new[] {
-                    new Point(0, obj.Height),
-                    new Point(obj.Height, obj.Width),
-                    new Point(obj.Width / 2, 0)
-                });
-                Region rg = new Region(gPath);
-                obj.Region = rg;
-            }
-
+            public Triangle(){ set_p(); }
+            public Triangle(int x, int y) : base(x, y) { set_p(); }
+            public Triangle(int x, int y, int size) : base(x, y, size) { set_p(); }
+            public Triangle(int x, int y, int size,Color color) : base(x, y, size,color) { set_p(); }
         }
         public class Storage
         {
             int _size;
             public Object[] massive;
             public int size() { return _size; }
-            public void add(int x, int y)
-            {
-                int i = 0;
-                while (i < _size && massive[i] != null)
-                {
-                    i++;
-                }
-                if (i != _size)
-                {
-                    massive[i] = new Triangle(x, y);
-                    massive[i].inside().Name = (i).ToString();
-                }
-            }
+            //public void add(int x, int y)
+            //{
+            //    int i = 0;
+            //    while (i < _size && massive[i] != null)
+            //    {
+            //        i++;
+            //    }
+            //    if (i != _size)
+            //    {
+            //        massive[i] = new Triangle(x, y);
+            //        massive[i].inside().Name = (i).ToString();
+            //    }
+            //}
             public void add(Object obj)
             {
                 int i = 0;
@@ -212,6 +201,14 @@ namespace laba_6
                         massive[i].select(false);
                     }
                     i++;
+                }
+            }
+            public void recolor_selected(Color color) { 
+                for(int i = 0; i < _size; i++)
+                {
+                    if (this.massive[i] != null) {
+                        if (this.massive[i].select()) { this.massive[i].set_color(color); }
+                    }
                 }
             }
             public int del_selected()
@@ -266,13 +263,12 @@ namespace laba_6
                 if (storage.get(k) != null)
                 {
                     System.Windows.Forms.Button circle = storage.get(k).inside();
-                    circle.MouseClick += select_circle;
-                    circle.KeyDown += del_selected_circle;
+                    circle.MouseClick += select_obj;
+                    circle.KeyDown += del_selected_obj;
                 }
                 k++;
             }
         }
-
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             //            i++;
@@ -280,13 +276,13 @@ namespace laba_6
             switch (obj_settings.pick_obj())
             {
                 case 0:
-                    obj = new Circle(e.X, e.Y);
+                    obj = new Circle(e.X, e.Y,obj_settings.resize(),obj_settings.get_color());
                     break;
                 case 1:
-                    obj = new Triangle(e.X, e.Y);
+                    obj = new Triangle(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
                     break;
                 case 2:
-                    obj = new Square(e.X, e.Y);
+                    obj = new Square(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
                     break;
                 default:
                     obj = null;
@@ -296,15 +292,16 @@ namespace laba_6
             storage.add(obj);
             if (obj != null)
             {
-                obj.inside().MouseClick += select_circle;
-                obj.inside().KeyDown += del_selected_circle;
+                obj.inside().MouseClick += select_obj;
+                obj.inside().KeyDown += del_selected_obj;
+                obj.inside().KeyDown += move_obj;
                 this.Controls.Add(obj.inside());
                 //                label1.Text = i.ToString();
                 storage.select_clear();
                 obj.select(true);
             }
         }
-        private void select_circle(object sender, MouseEventArgs e)
+        private void select_obj(object sender, MouseEventArgs e)
         {
             Object circle = null;
             int k = 0;
@@ -327,10 +324,40 @@ namespace laba_6
                 circle.select(true);
             }
         }
-        private void del_selected_circle(object sender, KeyEventArgs e)
+        private void del_selected_obj(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
             {
+                {
+                    Object circle = null;
+                    int k = 0;
+                    int size = storage.size();
+                    while (k < size)
+                    {
+                        circle = storage.get(k);
+                        if (circle != null && circle.select())
+                        {
+                            Controls.Remove(circle.inside());
+                        }
+                        k++;
+                    }
+                    storage.del_selected();
+                    //                i = i - storage.del_selected();
+                    //                label1.Text = i.ToString();
+                }
+            }
+        }
+        private void move_obj(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Right)
+            {
+                for(int i = 0; i < storage.size(); i++)
+                {
+                    if (storage.get(i).inside() != null && storage.get(i).select())
+                    {
+                        storage.get(i);
+                    }
+                }
                 {
                     Object circle = null;
                     int k = 0;
@@ -386,15 +413,24 @@ namespace laba_6
         {
             obj_settings.pick_obj(0);
         }
-
         private void треугольникToolStripMenuItem_Click(object sender, EventArgs e)
         {
             obj_settings.pick_obj(1);
         }
-
         private void квадратToolStripMenuItem_Click(object sender, EventArgs e)
         {
             obj_settings.pick_obj(2);
+        }
+        private void size_changer_ValueChanged(object sender, EventArgs e)
+        {
+            obj_settings.resize((int)size_changer.Value);
+        }
+        private void color_picker_Click(object sender, EventArgs e)
+        {
+            if(colorDialog.ShowDialog() == DialogResult.OK) {
+                obj_settings.set_color(colorDialog.Color);
+                storage.recolor_selected(colorDialog.Color);
+            }
         }
     }
 }

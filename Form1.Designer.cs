@@ -34,12 +34,13 @@
             this.кругToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.треугольникToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.квадратToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.цветToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.color_picker = new System.Windows.Forms.ToolStripMenuItem();
+            this.size_changer = new System.Windows.Forms.NumericUpDown();
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.size_changer)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -47,7 +48,7 @@
             this.menuStrip1.AllowDrop = true;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.object_picker,
-            this.цветToolStripMenuItem});
+            this.color_picker});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1064, 24);
@@ -87,37 +88,59 @@
             this.квадратToolStripMenuItem.Text = "Квадрат";
             this.квадратToolStripMenuItem.Click += new System.EventHandler(this.квадратToolStripMenuItem_Click);
             // 
-            // цветToolStripMenuItem
+            // color_picker
             // 
-            this.цветToolStripMenuItem.Name = "цветToolStripMenuItem";
-            this.цветToolStripMenuItem.Size = new System.Drawing.Size(45, 20);
-            this.цветToolStripMenuItem.Text = "Цвет";
+            this.color_picker.Name = "color_picker";
+            this.color_picker.Size = new System.Drawing.Size(45, 20);
+            this.color_picker.Text = "Цвет";
+            this.color_picker.Click += new System.EventHandler(this.color_picker_Click);
             // 
-            // numericUpDown1
+            // size_changer
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(292, 4);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDown1.TabIndex = 2;
+            this.size_changer.Location = new System.Drawing.Point(292, 4);
+            this.size_changer.Minimum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.size_changer.Name = "size_changer";
+            this.size_changer.Size = new System.Drawing.Size(120, 20);
+            this.size_changer.TabIndex = 2;
+            this.size_changer.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.size_changer.ValueChanged += new System.EventHandler(this.size_changer_ValueChanged);
             // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(193, 137);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1064, 681);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.size_changer);
             this.Controls.Add(this.menuStrip1);
             this.Name = "Form1";
             this.Text = "Form1";
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.size_changer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -127,13 +150,14 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem object_picker;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown size_changer;
         private System.Windows.Forms.ToolStripMenuItem кругToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem треугольникToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem квадратToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem цветToolStripMenuItem;
-        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.ToolStripMenuItem color_picker;
+        private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Label label1;
     }
 }
 
