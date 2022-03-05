@@ -35,56 +35,7 @@ namespace laba_6
         }
         public class Object
         {
-            protected int _x, _y,_size;
-            protected Color _color;
-            public bool _selected;
-            public System.Windows.Forms.Button obj = new System.Windows.Forms.Button();
-            //public System.Windows.Forms.MouseEventHandler click_circle;
-            public void set(int x, int y) { _x = x; _y = y;}
-            public int getX() { return _x; }
-            public int getY() { return _y;}
-            public void set_color(Color color) { 
-                _color = color;
-                obj.BackColor = _color;
-            }
-            public void set_size(int size) { _ = size>0?_size = size: size; }
-            public Object()
-            {
-                _x = 10; _y = 10; _size=60;
-                _color = Color.Green;
-                 obj.FlatStyle = FlatStyle.Flat;
-                obj.FlatAppearance.BorderSize = 0;
-                obj.Width = 60;
-                obj.Height = 60;
-                obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = _color;
-
-                //circle.Click += new EventHandler(select_circle);
-
-            }
-            public Object(int x, int y)
-            {
-                _x = x; _y = y; _size = 60;
-                _color = Color.Green;
-                obj.FlatStyle = FlatStyle.Flat;
-                obj.FlatAppearance.BorderSize = 0;
-                obj.Width = 60;
-                obj.Height = 60;
-                obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = _color;
-            }
-            public Object(int x, int y, int size)
-            {
-                _x = x; _y = y; _size = size;
-                _color = Color.Green;
-                obj.FlatStyle = FlatStyle.Flat;
-                obj.FlatAppearance.BorderSize = 0;
-                obj.Width = size;
-                obj.Height = size;
-                obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
-                obj.BackColor = _color;
-            }
-            public Object(int x, int y, int size, Color color)
+            private void set_p(int x, int y, int size, Color color)
             {
                 _x = x; _y = y; _size = size;
                 _color = color;
@@ -94,6 +45,49 @@ namespace laba_6
                 obj.Height = size;
                 obj.Location = new System.Drawing.Point(_x - obj.Width / 2, _y - obj.Height / 2);
                 obj.BackColor = color;
+            }
+            protected int _x, _y,_size;
+            protected Color _color;
+            public bool _selected;
+            public System.Windows.Forms.Button obj = new System.Windows.Forms.Button();
+            //public System.Windows.Forms.MouseEventHandler click_circle;
+            public void set(int x, int y)
+            {
+                int p = _size / 2;
+                if (x > p && x <= 1080-_size && y > _size+10 && y <= 720-10-_size-p)
+                {
+                    _x = x; _y = y;
+                    obj.Location = new System.Drawing.Point(x-p, y-p);
+                }
+            }
+            public void add(int x,int y)
+            {
+                this.set(_x+x,_y+y);
+            }
+            public int getX() { return _x; }
+            public int getY() { return _y;}
+            public void set_color(Color color) { 
+                _color = color;
+                obj.BackColor = _color;
+            }
+            public void set_size(int size) { _ = size>0?_size = size: size; }
+            public Object()
+            {
+                set_p(10,10,60,System.Drawing.Color.Green);
+                //circle.Click += new EventHandler(select_circle);
+
+            }
+            public Object(int x, int y)
+            {
+                set_p(x, y, 60, System.Drawing.Color.Green);
+            }
+            public Object(int x, int y, int size)
+            {
+                set_p(x, y, size, System.Drawing.Color.Green);
+            }
+            public Object(int x, int y, int size, Color color)
+            {
+                set_p(x, y, size, color);
             }
             virtual public System.Windows.Forms.Button inside()
             {
@@ -126,7 +120,7 @@ namespace laba_6
             {
                 _radius = _size / 2;
                 System.Drawing.Drawing2D.GraphicsPath gPath = new System.Drawing.Drawing2D.GraphicsPath();
-                gPath.AddEllipse(0 + _radius / 2, 0 + _radius / 2, _radius, _radius);
+                gPath.AddEllipse(0, 0, _size, _size);
                 Region rg = new Region(gPath);
                 obj.Region = rg;
             }
@@ -211,6 +205,16 @@ namespace laba_6
                     }
                 }
             }
+            public void move_selected(int x,int y)
+            {
+                for (int i = 0; i < _size; i++)
+                {
+                    if (this.massive[i] != null)
+                    {
+                        if (this.massive[i].select()){massive[i].add(x, y);}
+                    }
+                }
+            }
             public int del_selected()
             {
                 int i = 0;
@@ -272,33 +276,37 @@ namespace laba_6
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             //            i++;
-            Object obj=null;
-            switch (obj_settings.pick_obj())
+            int p = obj_settings.resize();
+            if (e.X > p && e.X <= 1080 - p && e.Y > p + 10 && e.Y <= 720 - p)
             {
-                case 0:
-                    obj = new Circle(e.X, e.Y,obj_settings.resize(),obj_settings.get_color());
-                    break;
-                case 1:
-                    obj = new Triangle(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
-                    break;
-                case 2:
-                    obj = new Square(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
-                    break;
-                default:
-                    obj = null;
-                    //impossible
-                    break;
-            }
-            storage.add(obj);
-            if (obj != null)
-            {
-                obj.inside().MouseClick += select_obj;
-                obj.inside().KeyDown += del_selected_obj;
-                obj.inside().KeyDown += move_obj;
-                this.Controls.Add(obj.inside());
-                //                label1.Text = i.ToString();
-                storage.select_clear();
-                obj.select(true);
+                Object obj = null;
+                switch (obj_settings.pick_obj())
+                {
+                    case 0:
+                        obj = new Circle(e.X, e.Y, obj_settings.resize()/2, obj_settings.get_color());
+                        break;
+                    case 1:
+                        obj = new Triangle(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
+                        break;
+                    case 2:
+                        obj = new Square(e.X, e.Y, obj_settings.resize(), obj_settings.get_color());
+                        break;
+                    default:
+                        obj = null;
+                        //impossible
+                        break;
+                }
+                storage.add(obj);
+                if (obj != null)
+                {
+                    obj.inside().MouseClick += select_obj;
+                    obj.inside().KeyDown += del_selected_obj;
+                    obj.inside().KeyDown += move_obj;
+                    this.Controls.Add(obj.inside());
+                    //                label1.Text = i.ToString();
+                    storage.select_clear();
+                    obj.select(true);
+                }
             }
         }
         private void select_obj(object sender, MouseEventArgs e)
@@ -349,32 +357,21 @@ namespace laba_6
         }
         private void move_obj(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Right)
+            if (e.KeyCode == Keys.W)
             {
-                for(int i = 0; i < storage.size(); i++)
-                {
-                    if (storage.get(i).inside() != null && storage.get(i).select())
-                    {
-                        storage.get(i);
-                    }
-                }
-                {
-                    Object circle = null;
-                    int k = 0;
-                    int size = storage.size();
-                    while (k < size)
-                    {
-                        circle = storage.get(k);
-                        if (circle != null && circle.select())
-                        {
-                            Controls.Remove(circle.inside());
-                        }
-                        k++;
-                    }
-                    storage.del_selected();
-                    //                i = i - storage.del_selected();
-                    //                label1.Text = i.ToString();
-                }
+                storage.move_selected(0, -1);
+            }
+            if (e.KeyCode == Keys.A)
+            {
+                storage.move_selected(-1, 0);
+            }
+            if (e.KeyCode == Keys.S)
+            {
+                storage.move_selected(0, 1);
+            }
+            if (e.KeyCode == Keys.D)
+            {
+                storage.move_selected(1, 0);
             }
         }
         private void paint(object sender, EventArgs e)
