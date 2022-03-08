@@ -54,7 +54,7 @@ namespace laba_6
             public void set(int x, int y)
             {
                 int p = _size / 2;
-                if (x > p && x <= 1080-_size && y > _size+10 && y <= 720-10-_size-p)
+                if (x > p && x <= 1080-p-22 && y > p+22 && y <= 720-40-p)
                 {
                     _x = x; _y = y;
                     obj.Location = new System.Drawing.Point(x-p, y-p);
@@ -276,8 +276,8 @@ namespace laba_6
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             //            i++;
-            int p = obj_settings.resize();
-            if (e.X > p && e.X <= 1080 - p && e.Y > p + 10 && e.Y <= 720 - p)
+            int p = obj_settings.resize()/2;
+            if (e.X > p && e.X <= 1080 - p-22 && e.Y > p + 22 && e.Y <= 720 - p-40)
             {
                 Object obj = null;
                 switch (obj_settings.pick_obj())
